@@ -232,7 +232,13 @@ func (client *Client) callOnce(systemPrompt, userPrompt string) (string, error) 
 	}
 
 	// 发送请求
-	httpClient := &http.Client{Timeout: client.Timeout}
+	transport := &http.Transport{
+		Proxy: http.ProxyFromEnvironment, // 支持从环境变量读取代理配置
+	}
+	httpClient := &http.Client{
+		Timeout:   client.Timeout,
+		Transport: transport,
+	}
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("发送请求失败: %w", err)
