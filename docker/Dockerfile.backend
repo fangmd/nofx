@@ -62,6 +62,18 @@ COPY --from=ta-lib-builder /usr/local /usr/local
 WORKDIR /app
 COPY --from=backend-builder /app/nofx .
 
+# 支持代理环境变量（Go http.Client 会自动读取这些变量）
+# 可以通过 docker run -e HTTP_PROXY=... 或 docker-compose.yml 传入
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
+ARG NO_PROXY
+ENV HTTP_PROXY=${HTTP_PROXY} \
+    HTTPS_PROXY=${HTTPS_PROXY} \
+    NO_PROXY=${NO_PROXY} \
+    http_proxy=${HTTP_PROXY} \
+    https_proxy=${HTTPS_PROXY} \
+    no_proxy=${NO_PROXY}
+
 EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \

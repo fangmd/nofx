@@ -150,6 +150,9 @@ func fetchCoinPool() ([]CoinInfo, error) {
 
 	client := &http.Client{
 		Timeout: coinPoolConfig.Timeout,
+		Transport: &http.Transport{
+			Proxy: http.ProxyFromEnvironment, // 支持系统代理
+		},
 	}
 
 	resp, err := client.Get(coinPoolConfig.APIURL)
@@ -471,6 +474,9 @@ func fetchOITop() ([]OIPosition, error) {
 
 	client := &http.Client{
 		Timeout: oiTopConfig.Timeout,
+		Transport: &http.Transport{
+			Proxy: http.ProxyFromEnvironment, // 支持系统代理
+		},
 	}
 
 	resp, err := client.Get(oiTopConfig.APIURL)

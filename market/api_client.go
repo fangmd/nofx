@@ -22,6 +22,9 @@ func NewAPIClient() *APIClient {
 	return &APIClient{
 		client: &http.Client{
 			Timeout: 30 * time.Second,
+			Transport: &http.Transport{
+				Proxy: http.ProxyFromEnvironment, // 支持系统代理
+			},
 		},
 	}
 }

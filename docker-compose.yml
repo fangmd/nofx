@@ -16,6 +16,28 @@ services:
       - /etc/localtime:/etc/localtime:ro  # Sync host time
     environment:
       - TZ=${NOFX_TIMEZONE:-Asia/Shanghai}  # Set timezone
+      # 代理配置（固定使用 host.docker.internal，适用于 Docker Desktop）
+      # 如需修改，请直接编辑此文件
+      - HTTP_PROXY=http://host.docker.internal:1087
+      - HTTPS_PROXY=http://host.docker.internal:1087
+      # 同时设置小写版本（确保兼容性）
+      - http_proxy=http://host.docker.internal:1087
+      - https_proxy=http://host.docker.internal:1087
+      # 不使用代理的地址
+      - NO_PROXY=localhost,127.0.0.1,host.docker.internal
+      - no_proxy=localhost,127.0.0.1,host.docker.internal
+    # 配置 host.docker.internal（Linux 环境需要，Docker Desktop 自动支持）
+    # 使用 host-gateway 自动映射到宿主机
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # DNS 配置（用于代理环境下的 DNS 解析）
+    # 默认使用 Google DNS，可通过环境变量 DNS_SERVER1 和 DNS_SERVER2 自定义
+    # 或者直接在下方修改 DNS 服务器地址
+    dns:
+      - ${DNS_SERVER1:-8.8.8.8}  # 主 DNS 服务器（默认 Google DNS）
+      - ${DNS_SERVER2:-8.8.4.4}  # 备用 DNS 服务器（默认 Google DNS）
+      # 如果需要使用企业内部 DNS，取消注释并设置：
+      # - ${CORPORATE_DNS:-}
     networks:
       - nofx-network
     healthcheck:
